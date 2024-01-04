@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build-client": "cd client && npm run build", 
     "start-server": "cd server && npm start",
     "start-client": "cd client && npm start",
-    "dev": "concurrently \"npm run start-server\" \"npm run start-client\""
+    "dev": "concurrently \"npm run start-server\" \"npm run start-client\"",
+    "deploy": "npm run build-client && npm run start-server"
   },
   "keywords": [],
   "author": "",

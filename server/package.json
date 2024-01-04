@@ -5,8 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js",
-    "cycle-postbuild": "npm install --prefix client && npm run build --prefix client"
+    "build": "nodemon app.js"
   },
   "author": "",
   "license": "ISC",
