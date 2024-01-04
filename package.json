@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build-client": "cd client && npm run build", 
+    "build-client": "cd client && npm run build",
     "start-server": "cd server && npm start",
     "start-client": "cd client && npm start",
     "dev": "concurrently \"npm run start-server\" \"npm run start-client\"",
@@ -12,5 +12,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.3.1"
+  }
 }
