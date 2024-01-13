@@ -10,7 +10,7 @@ app.use(cors())
 
 const PORT = process.env.PORT;
 
-mongoose.connect(MONGOURI,{
+mongoose.connect(process.env.MONGOURI,{
     useNewUrlParser:true,
     useUnifiedTopology: true
 
