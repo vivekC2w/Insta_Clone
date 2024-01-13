@@ -5,23 +5,9 @@ const app = express();
 const mongoose = require("mongoose");
 const { MONGOURI } = require("./config/keys");
 var cors = require("cors");
-const { allowedOrigins } = require("./config/cors");
 
 // Enable CORS for all routes
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Check if the origin is in the allowed list or if it's undefined
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true, // This is important for handling cookies and authentication headers
-  })
-);
+app.use(cors());
 
 const PORT = process.env.PORT;
 
