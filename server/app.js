@@ -1,5 +1,5 @@
 const dotenv = require('dotenv')
-dotenv.config({ path: '../.env' })
+dotenv.config({path : './.env'})
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose')
@@ -8,7 +8,7 @@ var cors = require('cors')
 
 app.use(cors())
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 mongoose.connect(MONGOURI,{
     useNewUrlParser:true,
@@ -31,6 +31,10 @@ app.use(express.json())
 app.use(require('./routes/auth'))
 app.use(require('./routes/post'))
 app.use(require('./routes/user'))
+
+app.get('/', (req, res) => {
+    res.status(200).json({"message": "OK"})
+})
 
 if(process.env.NODE_ENV=="production"){
     app.use(express.static('client/build'))
