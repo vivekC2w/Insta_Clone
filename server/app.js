@@ -1,49 +1,63 @@
-const dotenv = require('dotenv')
-dotenv.config({path : './.env'})
-const express = require('express');
+const dotenv = require("dotenv");
+dotenv.config({ path: "./.env" });
+const express = require("express");
 const app = express();
-const mongoose = require('mongoose')
-const {MONGOURI} = require('./config/keys')
-var cors = require('cors')
+const mongoose = require("mongoose");
+const { MONGOURI } = require("./config/keys");
+var cors = require("cors");
+const { allowedOrigins } = require("./config/cors");
 
-app.use(cors())
+// Enable CORS for all routes
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Check if the origin is in the allowed list or if it's undefined
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // This is important for handling cookies and authentication headers
+  })
+);
 
 const PORT = process.env.PORT;
 
-mongoose.connect(process.env.MONGOURI,{
-    useNewUrlParser:true,
-    useUnifiedTopology: true
-
-})
+mongoose.connect(process.env.MONGOURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // mongoose.connect(MONGOURI);
-mongoose.connection.on('connected', ()=> {
-    console.log("connected to mongo yeahh");
-})
-mongoose.connection.on('error', (err)=> {
-    console.log("err connecting", err);
-})
+mongoose.connection.on("connected", () => {
+  console.log("connected to mongo yeahh");
+});
+mongoose.connection.on("error", (err) => {
+  console.log("err connecting", err);
+});
 
-require('./models/user')
-require('./models/post');
+require("./models/user");
+require("./models/post");
 //we want to take all incoming request pass that to the json
-app.use(express.json())
-app.use(require('./routes/auth'))
-app.use(require('./routes/post'))
-app.use(require('./routes/user'))
+app.use(express.json());
+app.use(require("./routes/auth"));
+app.use(require("./routes/post"));
+app.use(require("./routes/user"));
 
-app.get('/', (req, res) => {
-    res.status(200).json({"message": "OK"})
-})
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "OK" });
+});
 
-if(process.env.NODE_ENV=="production"){
-    app.use(express.static('client/build'))
-    const path = require('path')
-    app.get("*",(req,res)=>{
-        res.sendFile(path.resolve(__dirname,'client','build','index.html'))
-    })
+if (process.env.NODE_ENV == "production") {
+  app.use(express.static("client/build"));
+  const path = require("path");
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
 }
 
-app.listen(PORT,()=>{
-    console.log("server is running on",PORT)
-})
+app.listen(PORT, () => {
+  console.log("server is running on", PORT);
+});
