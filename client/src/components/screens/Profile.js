@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { UserContext } from "../../App";
+import api from "../../api";
 
 const Profile = () => {
   const [mypics, setPics] = useState([]);
@@ -7,25 +8,13 @@ const Profile = () => {
   const { state, dispatch } = useContext(UserContext);
   const [image, setImage] = useState("");
   useEffect(() => {
-    fetch("/mypost", {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setPics(result.mypost);
-      });
+    api.get("/mypost").then(({ data }) => {
+      setPics(data.mypost);
+    });
 
-    fetch("/currentUser", {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setUser(result);
-      });
+    api.get("/currentUser").then(({ data }) => {
+      setUser(data);
+    });
   }, []);
 
   useEffect(() => {
@@ -34,24 +23,17 @@ const Profile = () => {
       data.append("file", image);
       data.append("upload_preset", "insta-clone");
       data.append("cloud_name", "vivekc2wcloud");
-      fetch("https://api.cloudinary.com/v1_1/vivekc2wcloud/image/upload", {
-        method: "post",
-        body: data,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          fetch("/updatepic", {
-            method: "put",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + localStorage.getItem("jwt"),
-            },
-            body: JSON.stringify({
+      api
+        .post(
+          "https://api.cloudinary.com/v1_1/vivekc2wcloud/image/upload",
+          data
+        )
+        .then(({ data }) => {
+          api
+            .put("/updatepic", {
               pic: data.url,
-            }),
-          })
-            .then((res) => res.json())
-            .then((result) => {
+            })
+            .then(({ data: result }) => {
               localStorage.setItem(
                 "user",
                 JSON.stringify({ ...state, pic: result.pic })

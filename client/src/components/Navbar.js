@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../App";
 import M from "materialize-css";
 import UserAvatar from "./UserAvatar";
+import api from "../api";
 const NavBar = () => {
   const searchModal = useRef(null);
   const [search, setSearch] = useState("");
@@ -60,17 +61,11 @@ const NavBar = () => {
 
   const fetchUsers = (query) => {
     setSearch(query);
-    fetch("/search-users", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    api
+      .post("/search-users", {
         query,
-      }),
-    })
-      .then((res) => res.json())
-      .then((results) => {
+      })
+      .then(({ data: results }) => {
         setUserDetails(results.user);
       });
   };
@@ -111,7 +106,7 @@ const NavBar = () => {
                   }}
                 >
                   <li className="collection-item">
-                    <UserAvatar item={item}/>
+                    <UserAvatar item={item} />
                   </li>
                 </Link>
               );

@@ -53,32 +53,33 @@ router.post('/signup', (req, res) => {
 })
 
 //signin route
-router.post('/signin', (req, res) => {
-    const {email, password} = req.body
-    if(!email || !password) {
-        return res.status(422).json({error:"please add email or password"})
-    } 
-    User.findOne({email:email})
-    .then(savedUser=>{
-        if(!savedUser) {
-            return res.status(422).json({error:"Inavlid Email or Password"}) 
-        }
-        //comapring pass getting from client ed pass in our database
-        bcrypt.compare(password, savedUser.password)
-        .then(doMatch=>{
-            if(doMatch){
-                // res.json({message:"successfully signed in"})
-                const token = jwt.sign({_id:savedUser._id}, JWT_SECRET)
-                const {_id, name, email,followers,following, pic} = savedUser
-                res.json({token, user:{_id, name, email,followers,following, pic}})
-            } else {
-                return res.status(422).json({error:"Invalid Email and Password"})
+router.post('/signin', async (req, res) => {
+    try {
+        const {email, password} = req.body
+        if(!email || !password) {
+            return res.status(400).json({error:"please add email or password"})
+        } 
+        User.findOne({email:email})
+        .then(savedUser=>{
+            if(!savedUser) {
+                return res.status(422).json({error:"Inavlid Email or Password"}) 
             }
+            //comapring pass getting from client ed pass in our database
+            bcrypt.compare(password, savedUser.password)
+            .then(doMatch=>{
+                if(doMatch){
+                    // res.json({message:"successfully signed in"})
+                    const token = jwt.sign({_id:savedUser._id}, JWT_SECRET)
+                    const {_id, name, email,followers,following, pic} = savedUser
+                    res.json({token, user:{_id, name, email,followers,following, pic}})
+                } else {
+                    return res.status(422).json({error:"Invalid Email and Password"})
+                }
+            })
         })
-        .catch(err=>{
-            console.log(err)
-        })
-    })
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"})
+    }
 })
 
 router.post('/reset-password',(req,res)=>{

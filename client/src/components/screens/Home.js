@@ -2,36 +2,24 @@ import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../App";
 import { Link } from "react-router-dom";
 import "../../App.css";
+import api from "../../api";
 
 const Home = () => {
   const [data, setData] = useState([]);
   const [showComments, setShowComments] = useState(false);
   const { state } = useContext(UserContext);
   useEffect(() => {
-    fetch("/allpost", {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setData(result.posts);
-      });
+    api.get("/allpost").then(({ data }) => {
+      setData(data.posts);
+    });
   }, []);
 
   const likePost = (id) => {
-    fetch("/like", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-      body: JSON.stringify({
+    api
+      .put("/like", {
         postId: id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
+      })
+      .then(({ data: result }) => {
         const newData = data.map((item) => {
           if (item._id == result._id) {
             return result;
@@ -47,18 +35,11 @@ const Home = () => {
   };
 
   const unlikePost = (id) => {
-    fetch("/unlike", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-      body: JSON.stringify({
+    api
+      .put("/unlike", {
         postId: id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
+      })
+      .then(({ data: result }) => {
         const newData = data.map((item) => {
           if (item._id == result._id) {
             return result;
@@ -74,19 +55,12 @@ const Home = () => {
   };
 
   const makeComment = (text, postId) => {
-    fetch("/comment", {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-      body: JSON.stringify({
+    api
+      .put("/comment", {
         postId,
         text,
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
+      })
+      .then(({ data: result }) => {
         const newData = data.map((item) => {
           if (item._id == result._id) {
             return result;
@@ -106,19 +80,12 @@ const Home = () => {
   };
 
   const deletePost = (postid) => {
-    fetch(`/deletepost/${postid}`, {
-      method: "delete",
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-      },
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        const newData = data.filter((item) => {
-          return item._id !== result._id;
-        });
-        setData(newData);
+    api.delete(`/deletepost/${postid}`).then(({ data: result }) => {
+      const newData = data.filter((item) => {
+        return item._id !== result._id;
       });
+      setData(newData);
+    });
   };
 
   return (
