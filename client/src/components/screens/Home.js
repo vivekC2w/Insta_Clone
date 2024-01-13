@@ -129,26 +129,26 @@ const Home = () => {
             <div className="user-profile">
               <img
                 className="user-profile-pic"
-                src={item.postedBy.pic}
+                src={item?.postedBy?.pic || "noAvatar.jpg"}
                 alt="Profile Pic"
               />
               <h5 style={{ padding: "5px" }}>
                 <Link
                   to={
-                    item.postedBy._id !== state._id
-                      ? "/profile/" + item.postedBy._id
+                    item?.postedBy?._id !== state?._id
+                      ? "/profile/" + item?.postedBy?._id
                       : "/profile"
                   }
                 >
-                  {item.postedBy.name}
+                  {item?.postedBy?.name}
                 </Link>{" "}
-                {item.postedBy._id == state._id && (
+                {item?.postedBy?._id == state?._id && (
                   <i
                     className="material-icons"
                     style={{
                       float: "right",
                     }}
-                    onClick={() => deletePost(item._id)}
+                    onClick={() => deletePost(item?._id)}
                   >
                     delete
                   </i>
@@ -157,21 +157,21 @@ const Home = () => {
             </div>
 
             <div className="card-image">
-              <img src={item.photo} />
+              <img src={item?.photo} />
             </div>
             <div className="card-content">
               <div className="likes-container">
                 <i
                   onClick={() => {
-                    item.likes.includes(state._id)
-                      ? unlikePost(item._id)
-                      : likePost(item._id);
+                    item?.likes?.includes(state?._id)
+                      ? unlikePost(item?._id)
+                      : likePost(item?._id);
                   }}
                   className="material-icons"
                   style={{ color: "red" }}
-                  title={item.likes.includes(state._id) ? "unlike" : "like"}
+                  title={item?.likes?.includes(state?._id) ? "unlike" : "like"}
                 >
-                  {item.likes.includes(state._id)
+                  {item?.likes?.includes(state?._id)
                     ? "favorite"
                     : "favorite_border"}
                 </i>
@@ -183,18 +183,18 @@ const Home = () => {
                   chat_bubble_outline
                 </i>
               </div>
-              <h6>{item.likes.length} likes</h6>
-              <h6 style={{ fontWeight: "bold" }}>{item.title}</h6>
-              <p>{item.body}</p>
+              <h6>{item?.likes?.length} likes</h6>
+              <h6 style={{ fontWeight: "bold" }}>{item?.title}</h6>
+              <p>{item?.body}</p>
               {showComments && (
                 <div className="comments">
-                  {item.comments.map((record) => {
+                  {item?.comments?.map((record) => {
                     return (
-                      <h6 key={record._id}>
+                      <h6 key={record?._id}>
                         <span style={{ fontWeight: "500" }}>
-                          {record.postedBy.name}
+                          {record?.postedBy?.name}
                         </span>{" "}
-                        {record.text}
+                        {record?.text}
                       </h6>
                     );
                   })}
@@ -203,7 +203,7 @@ const Home = () => {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  makeComment(e.target[0].value, item._id);
+                  makeComment(e.target[0].value, item?._id);
                 }}
               >
                 <input type="text" placeholder="Add a comment..."></input>
